@@ -22,4 +22,6 @@ public abstract class League {
 
     public Price getSpecialCardPrice() { return new Price(0, 1, 1, 1, 0); }
 
+    public boolean arePortsEnabled() { return true; }
+
 }

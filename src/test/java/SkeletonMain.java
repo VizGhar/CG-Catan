@@ -6,7 +6,7 @@ public class SkeletonMain {
         gameRunner.addAgent(Agent1.class);
         gameRunner.addAgent(Agent1.class);
         gameRunner.addAgent(Agent1.class);
-        gameRunner.addAgent(Agent2.class);
+        gameRunner.setLeagueLevel(1);
         gameRunner.start();
     }
 }

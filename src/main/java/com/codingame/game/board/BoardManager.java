@@ -24,6 +24,7 @@ public class BoardManager {
     private final List<Road> roads;
     private final List<Village> villages;
     private final List<Town> towns;
+    private int robberPosition;
 
     private final List<BoardTile> tiles = new ArrayList<>();
     private final List<Integer> scoring;
@@ -83,6 +84,7 @@ public class BoardManager {
         int offset = 0;
         for (int i = 0; i < tiles.size(); i++) {
             if (tiles.get(i).getType() == BoardTile.TileType.DESSERT) {
+                robberPosition = i;
                 offset = -1;
                 continue;
             }
@@ -143,6 +145,10 @@ public class BoardManager {
         if (actions.size() == 0 || !(actions.get(actions.size() - 1) instanceof BoardAction.SkipAction)) {
             skip();
         }
+    }
+
+    public int getRobberPosition() {
+        return robberPosition;
     }
 
     private void buyRoad(BoardAction.BuyRoadAction action) {

@@ -19,7 +19,7 @@
             <version>${gamengine.version}</version>
         </dependency>
 
-        <dependency>   
+        <dependency>
             <groupId>com.codingame.gameengine</groupId>
             <artifactId>module-entities</artifactId>
             <version>${gamengine.version}</version>
@@ -28,6 +28,24 @@
         <dependency>
             <groupId>com.codingame.gameengine</groupId>
             <artifactId>runner</artifactId>
+            <version>${gamengine.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.codingame.gameengine</groupId>
+            <artifactId>module-endscreen</artifactId>
+            <version>${gamengine.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.codingame.gameengine</groupId>
+            <artifactId>module-tooltip</artifactId>
+            <version>${gamengine.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.codingame.gameengine</groupId>
+            <artifactId>module-toggle</artifactId>
             <version>${gamengine.version}</version>
         </dependency>
     </dependencies>

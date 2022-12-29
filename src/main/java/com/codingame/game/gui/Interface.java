@@ -4,8 +4,12 @@ import com.codingame.game.Player;
 import com.codingame.game.board.*;
 import com.codingame.game.config.LeagueManager;
 import com.codingame.gameengine.core.MultiplayerGameManager;
+import com.codingame.gameengine.module.entities.Entity;
 import com.codingame.gameengine.module.entities.GraphicEntityModule;
+import com.codingame.gameengine.module.entities.Polygon;
 import com.codingame.gameengine.module.entities.Sprite;
+import com.codingame.gameengine.module.toggle.ToggleModule;
+import com.codingame.gameengine.module.tooltip.TooltipModule;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -37,12 +41,14 @@ public class Interface {
         this.graphicsModule = graphicsModule;
     }
 
+    private final List<Pair<Integer, Integer>> tileTogglePointOffsets = new ArrayList<>();
     private final Pair<Integer, Integer> tileOffset = new ImmutablePair<>(-100, -100);
     private final Pair<Integer, Integer> numberOffset = new ImmutablePair<>(0, 50);
     private final Pair<Integer, Integer> robberOffset = new ImmutablePair<>(0, -46);
     private final HashMap<Integer, Pair<Integer, Integer>> basePositions = new HashMap<>();
     private final List<Pair<Integer, Integer>> threePlayersHandsPosition = new ArrayList<>();
     private final List<Pair<Integer, Integer>> fourPlayersHandsPosition = new ArrayList<>();
+    private final List<Entity<?>> tileTooltipPolygons = new ArrayList<>();
 
     {
         basePositions.put(0, new ImmutablePair<>(1070, 196));
@@ -73,9 +79,20 @@ public class Interface {
         fourPlayersHandsPosition.add(new ImmutablePair<>(25, 285));
         fourPlayersHandsPosition.add(new ImmutablePair<>(25, 545));
         fourPlayersHandsPosition.add(new ImmutablePair<>(25, 805));
+
+        tileTogglePointOffsets.add(new ImmutablePair<>(-75, -45));
+        tileTogglePointOffsets.add(new ImmutablePair<>(0, -85));
+        tileTogglePointOffsets.add(new ImmutablePair<>(75, -45));
+        tileTogglePointOffsets.add(new ImmutablePair<>(75, 45));
+        tileTogglePointOffsets.add(new ImmutablePair<>(0, 85));
+        tileTogglePointOffsets.add(new ImmutablePair<>(-75, 45));
     }
 
-    public void hud(MultiplayerGameManager<Player> gameManager, BoardManager boardManager) {
+    TooltipModule tooltipModule;
+
+    public void hud(MultiplayerGameManager<Player> gameManager, BoardManager boardManager, TooltipModule tooltipModule, ToggleModule toggleModule) {
+        this.tooltipModule = tooltipModule;
+
         graphicsModule.createSprite()
                 .setX(0)
                 .setY(0)
@@ -144,6 +161,21 @@ public class Interface {
                     .setZIndex(i + 20)
                     .setImage(tile.getType().toString().toLowerCase() + ".png");
 
+            Polygon togglePolygon = graphicsModule.createPolygon()
+                    .addPoint(tilePosition.getLeft() + tileTogglePointOffsets.get(0).getLeft(), tilePosition.getRight() + tileTogglePointOffsets.get(0).getRight())
+                    .addPoint(tilePosition.getLeft() + tileTogglePointOffsets.get(1).getLeft(), tilePosition.getRight() + tileTogglePointOffsets.get(1).getRight())
+                    .addPoint(tilePosition.getLeft() + tileTogglePointOffsets.get(2).getLeft(), tilePosition.getRight() + tileTogglePointOffsets.get(2).getRight())
+                    .addPoint(tilePosition.getLeft() + tileTogglePointOffsets.get(3).getLeft(), tilePosition.getRight() + tileTogglePointOffsets.get(3).getRight())
+                    .addPoint(tilePosition.getLeft() + tileTogglePointOffsets.get(4).getLeft(), tilePosition.getRight() + tileTogglePointOffsets.get(4).getRight())
+                    .addPoint(tilePosition.getLeft() + tileTogglePointOffsets.get(5).getLeft(), tilePosition.getRight() + tileTogglePointOffsets.get(5).getRight())
+                    .setAlpha(0.0)
+                    .setZIndex(i + 21);
+
+            toggleModule.displayOnToggleState(togglePolygon, "tooltips", true);
+
+            tileTooltipPolygons.add(i, togglePolygon);
+            setupTooltip(i, tile.getType().toString());
+
             if (tile.getType() == BoardTile.TileType.DESSERT) {
                 continue;
             }
@@ -163,6 +195,12 @@ public class Interface {
                 .setY(tilePosition.getRight())  // ignore robberOffset for dessert
                 .setZIndex(60)
                 .setImage("robber.png");
+    }
+
+    private void setupTooltip(int tileId, String text) {
+        if (tooltipModule == null) throw new IllegalStateException("Init interface with hud() first");
+        tooltipModule.removeTooltipText(tileTooltipPolygons.get(tileId));
+        tooltipModule.setTooltipText(tileTooltipPolygons.get(tileId), text);
     }
 
     private static class GameState {
